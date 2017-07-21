@@ -1,19 +1,23 @@
 // Adding ScalaStyle support
 buildscript {
     repositories {
+        mavenLocal()
         jcenter()
     }
     dependencies {
-        classpath(
-            [group: "org.github.ngbinh.scalastyle", name: "gradle-scalastyle-plugin_2.11", version: "0.7.2"]
-        )
+        classpath  group: "org.github.ngbinh.scalastyle", name: "gradle-scalastyle-plugin_2.11", version: "0.7.2"
+        //classpath "com.hierynomus.gradle.plugins:scalariform-gradle-plugin:0.2.0"
     }
 }
 
+plugins {
+    id "com.github.hierynomus.scalariform" version "0.2.0"
+}
 apply plugin: 'scala'
-apply plugin: 'scalaStyle'
+//apply plugin: 'scalaStyle'
 apply plugin: 'project-report'
 apply plugin: 'application'
+//apply plugin: nl.javadude.gradle.plugins.scalariform.ScalariformPlugin
 
 // Scala and Akka versions
 def scalaMajor = "2.11"
@@ -59,18 +63,36 @@ tasks.withType(ScalaCompile) {
 	scalaCompileOptions.additionalParameters = ["-unchecked", "-deprecation", "-feature", "-Xfatal-warnings", "-encoding", "utf8"]
 }
 
-// ScalaStyle config, by putting it to the project subdirectory, IDEA will automatically use it
-scalaStyle {
-    configLocation = "$rootDir/project/scalastyle_config.xml"
-    includeTestSourceDirectory = true
-    source = "src/main/scala"
-    testSource = "src/test/scala"    
+
+scalariform {
+    alignSingleLineCaseStatements = true
+    newlineAtEndOfFile = true
+    indentLocalDefs = false
+    indentSpaces = 2
+    multilineScaladocCommentsStartOnFirstLine = false
+    placeScaladocAsterisksBeneathSecondAsterisk = true
+    spacesAroundMultiImports = false
+    spacesWithinPatternBinders = true
+    danglingCloseParenthesis = 'Prevent'
+    firstArgumentOnNewline = 'Preserve'
+    doubleIndentMethodDeclaration = true
+    // doubleIndentConstructorArguments = true
 }
 
+formatAllScala
+
+// ScalaStyle config, by putting it to the project subdirectory, IDEA will automatically use it
+//scalaStyle {
+//    configLocation = "$rootDir/project/scalastyle_config.xml"
+//    includeTestSourceDirectory = true
+//    source = "src/main/scala"
+//    testSource = "src/test/scala"
+//}
+
 // Run ScalaStyle with the tests
-check {
-    dependsOn "scalaStyle"
-}
+//check {
+//    dependsOn "scalaStyle"
+//}
 
 // specs2 console logging
 test {
